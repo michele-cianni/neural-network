@@ -32,17 +32,28 @@ public class Neuron implements NeuralComponent<List<Double>, Double> {
 
     // Backpropagate gradients for the neuron
     public void backpropagate(List<Double> inputs, double errorSignal, double learningRate) {
+
+        double weightedSum = bias + sumWeights(inputs);
+        double activatedErrorSignal = errorSignal * activationDerivativeReLU(weightedSum);
+
+        // Clear previous gradients
+        weightsGradients.clear();
+        
         // Calculate gradients for weights and bias
         for (int i = 0; i < weights.size(); i++) {
-            weightsGradients.add(i,  errorSignal * inputs.get(i));
+            weightsGradients.add(i, activatedErrorSignal * inputs.get(i));
         }
-        biasGradient = errorSignal;
+        biasGradient = activatedErrorSignal;
 
         // Update weights and bias using gradient descent
         for (int i = 0; i < weights.size(); i++) {
             weights.set(i, weights.get(i) - learningRate * weightsGradients.get(i));
         }
         bias -= learningRate * biasGradient;
+    }
+
+    private double activationDerivativeReLU(double value) {
+        return value > 0 ? 1 : 0;
     }
 
     public List<Double> getWeights() {

@@ -3,12 +3,103 @@
  */
 package org.example;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
+
+    /*
+     * This is a simple neural network configuration.
+     * It has an input layer with 2 neurons, a hidden layer with 4 neurons
+     * and an output layer with 3 neurons.
+     */
+    public static void main(String[] args) {
+
+        System.out.println("=== Testing Neural Network ===");
+        int[] neuronsPerLayer = { 4, 3 };
+        int inputSize = 2;
+
+        NeuralNetwork neuralNetwork = new NeuralNetwork(neuronsPerLayer, inputSize);
+        List<List<Double>> trainingData = Arrays.asList(
+                Arrays.asList(0.0, 0.0),
+                Arrays.asList(0.0, 1.0),
+                Arrays.asList(1.0, 0.0),
+                Arrays.asList(1.0, 1.0));
+
+        List<Integer> trainingLabels = Arrays.asList(0, 1, 1, 0); // Example labels for XOR-like problem
+
+        double learningRate = 0.1;
+        int epochs = 1000;
+
+        System.out.println("Training the neural network...");
+
+        // Training loop
+        for (int epoch = 0; epoch < epochs; epoch++) {
+            double totalLoss = 0.0;
+
+            for (int i = 0; i < trainingData.size(); i++) {
+                List<Double> input = trainingData.get(i);
+                int actualLabel = trainingLabels.get(i);
+
+                // Forward pass
+                List<Double> predicted = neuralNetwork.feedForward(input);
+
+                // Calculate loss (cross-entropy)
+                double loss = -Math.log(predicted.get(actualLabel) + 1e-15); // Add small value to avoid log(0)
+                totalLoss += loss;
+
+                // Backward pass
+                neuralNetwork.backpropagate(input, predicted, actualLabel, learningRate);
+            }
+
+            // Print progress every 100 epochs
+            if (epoch % 100 == 0) {
+                System.out.printf("Epoch %d, Average Loss: %.4f%n", epoch, totalLoss / trainingData.size());
+            }
+        }
+
+        System.out.println("Training completed.");
+
+        // Test the trained network
+        System.out.println("\n=== Testing Predictions ===");
+        for (int i = 0; i < trainingData.size(); i++) {
+            List<Double> input = trainingData.get(i);
+            List<Double> predicted = neuralNetwork.feedForward(input);
+            int predictedClass = getPredictedClass(predicted);
+            int actualClass = trainingLabels.get(i);
+
+            System.out.printf("Input: %s, Predicted: Class %d (%.3f), Actual: Class %d, Correct: %s%n",
+                    input, predictedClass, predicted.get(predictedClass), actualClass,
+                    predictedClass == actualClass ? "V" : "X");
+        }
+
+        // Test with new data
+        System.out.println("\n=== Testing with New Data ===");
+        List<List<Double>> testInputs = Arrays.asList(
+                Arrays.asList(0.1, 0.1),
+                Arrays.asList(0.9, 0.1),
+                Arrays.asList(0.1, 0.9),
+                Arrays.asList(0.9, 0.9));
+
+        for (List<Double> input : testInputs) {
+            List<Double> predicted = neuralNetwork.feedForward(input);
+            int predictedClass = getPredictedClass(predicted);
+
+            System.out.printf("Input: %s, Predicted: Class %d (confidence: %.3f)%n",
+                    input, predictedClass, predicted.get(predictedClass));
+        }
     }
 
-    public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+    private static int getPredictedClass(List<Double> predictions) {
+        // Find the index of the maximum value in the predicted list
+        int maxIndex = 0;
+        double maxValue = predictions.get(0);
+        for (int i = 1; i < predictions.size(); i++) {
+            if (predictions.get(i) > maxValue) {
+                maxValue = predictions.get(i);
+                maxIndex = i;
+            }
+        }
+        return maxIndex;
     }
 }
