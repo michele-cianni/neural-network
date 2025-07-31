@@ -5,10 +5,26 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Represents a layer in a neural network, containing multiple neurons.
+ * Each layer can perform feedforward operations and backpropagation.
+ * 
+ * @author Michele Cianni
+ * @version 1.0
+ * @see NeuralComponent
+ * @see Neuron
+ */
 public class Layer implements NeuralComponent<List<Double>, List<Double>> {
 
     private final List<Neuron> neurons;
 
+    /**
+     * Constructs a Layer with a specified number of neurons, each initialized with
+     * weights based on the number of inputs.
+     *
+     * @param numberOfNeurons The number of neurons in this layer
+     * @param numberOfInputs  The number of inputs each neuron will receive
+     */
     public Layer(int numberOfNeurons, int numberOfInputs) {
         neurons = IntStream.range(0, numberOfNeurons).mapToObj(i -> createNeuron(numberOfInputs)).toList();
     }
@@ -27,15 +43,26 @@ public class Layer implements NeuralComponent<List<Double>, List<Double>> {
         return neurons.stream().mapToDouble(neuron -> neuron.feedForward(input)).boxed().toList();
     }
 
-    // Backpropagate the error through this layer
+    /**
+     * Backpropagates the error through the layer.
+     * This method updates the weights and biases of each neuron based on the error
+     * signals and returns the error signals for the previous layer.
+     * 
+     * @param inputs       The inputs to the layer during the forward pass
+     * @param errorSignals The error signals from the next layer or the output layer
+     * @param learningRate The learning rate for updating the weights and biases
+     * @return A list of error signals for the previous layer
+     */
     public List<Double> backpropagate(List<Double> inputs, List<Double> errorSignals, double learningRate) {
-        List<Double> nextErrorSignals = new ArrayList<>(inputs.size()); // Error signal for the previous layer
+        
+        List<Double> nextErrorSignals = new ArrayList<>(inputs.size()); 
 
         // Initialize with zeros
         for (int i = 0; i < inputs.size(); i++) {
             nextErrorSignals.add(0.0);
         }
 
+        // Backpropagate through each neuron in the layer
         for (int i = 0; i < neurons.size(); i++) {
             Neuron neuron = neurons.get(i);
             double errorSignal = errorSignals.get(i);
