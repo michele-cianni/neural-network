@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
  * @see NeuralComponent
  * @see Layer
  */
-public class NeuralNetwork implements NeuralComponent<List<Double>, List<Double>> {
+public final class NeuralNetwork implements NeuralComponent<List<Double>, List<Double>> {
 
     private final List<Layer> layers;
 
