@@ -1,5 +1,6 @@
-package org.example;
+package org.example.api;
 
+import org.example.api.Layer;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

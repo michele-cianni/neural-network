@@ -1,4 +1,4 @@
-package org.example;
+package org.example.api;
 
 /**
  * NeuralComponent is a functional interface that defines a contract for components

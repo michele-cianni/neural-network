@@ -6,6 +6,8 @@ package org.example;
 import java.util.Arrays;
 import java.util.List;
 
+import org.example.api.NeuralNetwork;
+
 public class App {
 
     /*
