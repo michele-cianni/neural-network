@@ -4,10 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
+/**
+ * Represents a neural network composed of multiple layers.
+ * Each layer can perform feedforward operations and backpropagation.
+ * 
+ * @author Michele Cianni
+ * @version 1.0
+ * @see NeuralComponent
+ * @see Layer
+ */
 public class NeuralNetwork implements NeuralComponent<List<Double>, List<Double>> {
 
     private final List<Layer> layers;
 
+    /**
+     * Constructs a NeuralNetwork with specified layers.
+     *
+     * @param neuronsPerLayer An array where each element specifies the number of
+     *                        neurons in that layer
+     * @param inputSize       The number of inputs for the first layer
+     */
     public NeuralNetwork(int[] neuronsPerLayer, int inputSize) {
         layers = IntStream.range(0, neuronsPerLayer.length)
                 .mapToObj(i -> createLayer(neuronsPerLayer, inputSize, i))
@@ -38,6 +54,17 @@ public class NeuralNetwork implements NeuralComponent<List<Double>, List<Double>
         return values.stream().mapToDouble(Math::exp).sum();
     }
 
+    /**
+     * Backpropagates the error through the network.
+     * This method updates the weights and biases of each layer based on the error
+     * signals and returns the error signals for the previous layer.
+     * 
+     * @param inputs       The inputs to the network during the forward pass
+     * @param predicted    The predicted outputs from the network
+     * @param actualLabel  The actual label for the input data, used for calculating
+     *                     error
+     * @param learningRate The learning rate for updating the weights and biases
+     */
     public void backpropagate(List<Double> inputs, List<Double> predicted, int actualLabel, double learningRate) {
         // Calculate error signals for the output layer
         List<Double> errorSignals = new ArrayList<>(predicted.size());
