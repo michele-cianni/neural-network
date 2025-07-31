@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
  * @see NeuralComponent
  * @see Neuron
  */
-public class Layer implements NeuralComponent<List<Double>, List<Double>> {
+public final class Layer implements NeuralComponent<List<Double>, List<Double>> {
 
     private final List<Neuron> neurons;
 
